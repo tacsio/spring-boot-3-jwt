@@ -9,6 +9,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +27,8 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
     private final JwtConfig jwtConfig;
     private final SecretKey secretKey;
+
+    private final Logger log = LoggerFactory.getLogger(JwtTokenVerifier.class);
 
     public JwtTokenVerifier(JwtConfig jwtConfig, SecretKey secretKey) {
         this.jwtConfig = jwtConfig;
@@ -61,7 +66,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             var authenticationToken = new UsernamePasswordAuthenticationToken(username, null, grantedAuthorities);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } catch (JwtException e) {
-            throw new IllegalStateException(String.format("Token %s cannot be trusted", token));
+            log.error(String.format("[Access denied] Token %s cannot be trusted", token));
         }
 
         filterChain.doFilter(request, response);

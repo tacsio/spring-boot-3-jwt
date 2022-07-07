@@ -38,10 +38,18 @@ public class ApplicationSecurityConfig {
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+
                 .apply(jwtFilters(mapper, jwtConfig, secretKey))
                 .and()
+
+                .exceptionHandling()
+                .and()
+
                 .authorizeRequests()
-                .antMatchers("/up", "/login").permitAll()
+
+                .antMatchers("/up").permitAll()
+                .antMatchers("/error").permitAll()
+
                 .anyRequest().authenticated();
 
         return http.build();
