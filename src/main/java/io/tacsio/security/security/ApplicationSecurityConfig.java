@@ -49,7 +49,7 @@ public class ApplicationSecurityConfig {
 
                 .antMatchers("/up").permitAll()
                 .antMatchers("/error").permitAll()
-
+                .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated();
 
         return http.build();
